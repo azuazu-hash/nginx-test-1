@@ -7,8 +7,10 @@ pipeline {
         stage("Set up") {
             steps {
                 sh """
-                    sudo pip3 install molecule
-                    sudo pip3 install docker
+                    python3 -m venv env
+                    source ./env/bin/activate 
+                    python -m pip install molecule
+                    python -m pip install docker
                 """
             } //steps
         } //stage
@@ -17,6 +19,7 @@ pipeline {
         stage("Create docker image for testing") {
             steps {
                 sh """
+                    source ./env/bin/activate 
                     python3 -m molecule create
                 """
             } //steps
@@ -24,6 +27,7 @@ pipeline {
         stage("Apply Ansible role to docker image") {
             steps {
                 sh """
+                    source ./env/bin/activate 
                     python3 -m molecule converge
                 """
             } //steps
@@ -31,6 +35,7 @@ pipeline {
         stage("Check idempotency") {
             steps {
                 sh """
+                    source ./env/bin/activate 
                     python3 -m molecule idempotence
                 """
             } //steps
@@ -38,6 +43,7 @@ pipeline {
         stage("Cleanup molecule") {
             steps {
                 sh """
+                    source ./env/bin/activate 
                     python3 -m molecule cleanup
                 """
             } //steps
@@ -45,6 +51,7 @@ pipeline {
         stage("Destroy molecule instance") {
             steps {
                 sh """
+                    source ./env/bin/activate 
                     python3 -m molecule destroy
                 """
             } //steps
@@ -53,8 +60,7 @@ pipeline {
     post {
         always {
             sh """
-                sudo pip3 uninstall docker -y
-                sudo pip3 uninstall molecule -y
+                rm -rf env
             """
         }
     }
