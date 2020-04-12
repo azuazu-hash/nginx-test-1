@@ -28,7 +28,7 @@ pipeline {
             steps {
                 sh """
                     source ./env/bin/activate 
-                    python3 -m molecule converge
+                    sudo python3 -m molecule converge
                 """
             } //steps
         } //stage
